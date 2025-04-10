@@ -1,4 +1,4 @@
-package andrehsvictor.dotask.common.model;
+package andrehsvictor.dotask.revokedtoken;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
