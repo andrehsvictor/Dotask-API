@@ -6,7 +6,7 @@ import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import andrehsvictor.dotask.user.model.User;
+import andrehsvictor.dotask.user.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

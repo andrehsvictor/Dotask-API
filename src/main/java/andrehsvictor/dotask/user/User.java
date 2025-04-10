@@ -1,16 +1,13 @@
-package andrehsvictor.dotask.project.model;
+package andrehsvictor.dotask.user;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import andrehsvictor.dotask.user.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -24,25 +21,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "projects")
-public class Project implements Serializable {
+@Table(name = "users")
+public class User implements Serializable {
 
-    private static final long serialVersionUID = 3657625015506370387L;
-
+    private static final long serialVersionUID = 4440050590745414806L;
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String email;
+    private String password;
     private String name;
-    private String description;
-    private String color;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    private Integer taskCount;
-
+    private boolean emailVerified;
+    private String emailVerificationToken;
+    private LocalDateTime emailVerificationTokenExpiresAt;
+    private String passwordResetToken;
+    private LocalDateTime passwordResetTokenExpiresAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -50,12 +44,12 @@ public class Project implements Serializable {
     protected void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.taskCount = 0;
-        this.color = "#538083";
+        this.emailVerified = false;
     }
 
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
 }

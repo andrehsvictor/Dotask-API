@@ -1,12 +1,12 @@
-package andrehsvictor.dotask.task.model;
+package andrehsvictor.dotask.task;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import andrehsvictor.dotask.project.model.Project;
-import andrehsvictor.dotask.user.model.User;
+import andrehsvictor.dotask.project.Project;
+import andrehsvictor.dotask.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

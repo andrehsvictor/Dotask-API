@@ -1,10 +1,8 @@
-package andrehsvictor.dotask.task.repository;
+package andrehsvictor.dotask.task;
 
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import andrehsvictor.dotask.task.model.Task;
 
 public interface TaskRepository extends JpaRepository<Task, UUID> {
 

@@ -1,4 +1,4 @@
-package andrehsvictor.dotask.task.model;
+package andrehsvictor.dotask.task;
 
 public enum TaskStatus {
     PENDING,
