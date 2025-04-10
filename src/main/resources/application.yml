@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: @project.name@
+  config:
+    import: optional:file:.env[.properties]
+
+security:
+  token:
+    jwt:
+      private-key-path: file:${JWT_PRIVATE_KEY_PATH}
+      public-key-path: file:${JWT_PUBLIC_KEY_PATH}
+      issuer: ${JWT_ISSUER}
+      audience: ${JWT_AUDIENCE}
+    access:
+      lifespan: ${ACCESS_TOKEN_LIFESPAN:15m}
+    refresh:
+      lifespan: ${REFRESH_TOKEN_LIFESPAN:1d}
+    email-verification:
+      lifespan: ${EMAIL_VERIFICATION_TOKEN_LIFESPAN:1h}
+    password-reset:
+      lifespan: ${PASSWORD_RESET_TOKEN_LIFESPAN:1h}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}
+    allowed-methods: ${CORS_ALLOWED_METHODS}
+    
