@@ -1,9 +1,10 @@
-package andrehsvictor.dotask.model;
+package andrehsvictor.dotask.project.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import andrehsvictor.dotask.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

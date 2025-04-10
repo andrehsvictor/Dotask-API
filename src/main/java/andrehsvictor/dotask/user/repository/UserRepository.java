@@ -1,10 +1,8 @@
-package andrehsvictor.dotask.repository;
+package andrehsvictor.dotask.user;
 
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import andrehsvictor.dotask.model.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 

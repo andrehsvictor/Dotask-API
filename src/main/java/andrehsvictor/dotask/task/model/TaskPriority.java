@@ -1,4 +1,4 @@
-package andrehsvictor.dotask.model;
+package andrehsvictor.dotask.task.model;
 
 public enum TaskPriority {
     LOW(1),

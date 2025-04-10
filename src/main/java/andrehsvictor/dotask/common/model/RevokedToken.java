@@ -1,4 +1,4 @@
-package andrehsvictor.dotask.model;
+package andrehsvictor.dotask.common.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
