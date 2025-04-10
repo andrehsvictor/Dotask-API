@@ -1,4 +1,4 @@
-package andrehsvictor.dotask.user;
+package andrehsvictor.dotask.user.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import andrehsvictor.dotask.project.model.Project;
-import andrehsvictor.dotask.user.User;
+import andrehsvictor.dotask.user.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
