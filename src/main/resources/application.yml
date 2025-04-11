@@ -8,6 +8,14 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:dotask}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:postgres}
+  
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          audiences:
+          - ${security.token.jwt.audience}
+          public-key-location: ${security.token.jwt.public-key-path}
 
 security:
   token:
