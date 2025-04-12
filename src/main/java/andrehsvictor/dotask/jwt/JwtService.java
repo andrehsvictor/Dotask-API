@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -87,6 +89,27 @@ public class JwtService {
             return jwtDecoder.decode(token);
         } catch (Exception e) {
             throw new UnauthorizedException(e.getMessage());
+        }
+    }
+
+    public UUID getCurrentUserUuid() {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            throw new UnauthorizedException("No valid JWT authentication found");
+        }
+
+        Jwt jwt = jwtAuth.getToken();
+        String subject = jwt.getSubject();
+
+        if (subject == null || subject.isBlank()) {
+            throw new UnauthorizedException("JWT missing subject claim");
+        }
+
+        try {
+            return UUID.fromString(subject);
+        } catch (IllegalArgumentException e) {
+            throw new UnauthorizedException("Invalid subject format - must be UUID");
         }
     }
 }
