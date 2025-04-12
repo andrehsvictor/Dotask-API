@@ -33,11 +33,11 @@ import lombok.RequiredArgsConstructor;
 public class JwtConfig {
 
     @NotNull(message = "RSA private key path must be provided")
-    @Value("${security.jwt.private-key-path}")
+    @Value("${security.token.jwt.private-key-path}")
     private RSAPrivateKey privateKey;
 
     @NotNull(message = "RSA public key path must be provided")
-    @Value("${security.jwt.public-key-path}")
+    @Value("${security.token.jwt.public-key-path}")
     private RSAPublicKey publicKey;
 
     private final List<OAuth2TokenValidator<Jwt>> jwtValidators;

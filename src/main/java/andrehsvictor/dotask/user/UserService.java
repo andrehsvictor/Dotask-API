@@ -3,6 +3,7 @@ package andrehsvictor.dotask.user;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ import andrehsvictor.dotask.user.dto.SendActionEmailDto;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Lazy))
 public class UserService {
 
     private final UserRepository userRepository;
