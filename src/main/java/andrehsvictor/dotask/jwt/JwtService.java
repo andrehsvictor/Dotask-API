@@ -86,7 +86,7 @@ public class JwtService {
         try {
             return jwtDecoder.decode(token);
         } catch (Exception e) {
-            throw new UnauthorizedException("Invalid token: " + e.getMessage());
+            throw new UnauthorizedException(e.getMessage());
         }
     }
 }

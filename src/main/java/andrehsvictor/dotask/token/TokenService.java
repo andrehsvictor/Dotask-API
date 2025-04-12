@@ -28,31 +28,17 @@ public class TokenService {
     public GetTokenDto request(CredentialsDto credentials) {
         authService.authenticate(credentials.getEmail(), credentials.getPassword());
         User user = userService.findByEmail(credentials.getEmail());
-        Jwt accessToken = jwtService.issue(user.getId().toString(), JwtType.ACCESS);
-        Jwt refreshToken = jwtService.issue(user.getId().toString(), JwtType.REFRESH);
-        Long expiresIn = accessToken.getExpiresAt().getEpochSecond() - accessToken.getIssuedAt().getEpochSecond();
-        return GetTokenDto.builder()
-                .accessToken(accessToken.getTokenValue())
-                .refreshToken(refreshToken.getTokenValue())
-                .expiresIn(expiresIn)
-                .build();
+        return generateTokenResponse(user.getId().toString());
     }
 
     public GetTokenDto refresh(PostRefreshTokenDto refreshTokenDto) {
         Jwt jwt = jwtService.decode(refreshTokenDto.getRefreshToken());
-        JwtType type = jwtService.getTokenType(jwt);
-        if (type != JwtType.REFRESH) {
-            throw new InvalidJwtTypeException("Invalid token type: " + type);
+
+        if (jwtService.getTokenType(jwt) != JwtType.REFRESH) {
+            throw new InvalidJwtTypeException("Token must be a refresh token");
         }
-        String subject = jwt.getSubject();
-        Jwt accessToken = jwtService.issue(subject, JwtType.ACCESS);
-        Jwt refreshToken = jwtService.issue(jwt, JwtType.REFRESH);
-        Long expiresIn = accessToken.getExpiresAt().getEpochSecond() - accessToken.getIssuedAt().getEpochSecond();
-        return GetTokenDto.builder()
-                .accessToken(accessToken.getTokenValue())
-                .refreshToken(refreshToken.getTokenValue())
-                .expiresIn(expiresIn)
-                .build();
+
+        return generateTokenResponse(jwt.getSubject());
     }
 
     public void revoke(RevokeTokenDto revokeTokenDto) {
@@ -60,4 +46,20 @@ public class TokenService {
         revokedTokenService.revoke(jwt);
     }
 
+    private GetTokenDto generateTokenResponse(String subject) {
+        Jwt accessToken = jwtService.issue(subject, JwtType.ACCESS);
+        Jwt refreshToken = jwtService.issue(subject, JwtType.REFRESH);
+
+        long expiresIn = calculateExpirationTime(accessToken);
+
+        return GetTokenDto.builder()
+                .accessToken(accessToken.getTokenValue())
+                .refreshToken(refreshToken.getTokenValue())
+                .expiresIn(expiresIn)
+                .build();
+    }
+
+    private long calculateExpirationTime(Jwt token) {
+        return token.getExpiresAt().getEpochSecond() - token.getIssuedAt().getEpochSecond();
+    }
 }
