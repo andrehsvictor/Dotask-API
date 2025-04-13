@@ -33,11 +33,10 @@ public class TokenService {
 
     public GetTokenDto refresh(PostRefreshTokenDto refreshTokenDto) {
         Jwt jwt = jwtService.decode(refreshTokenDto.getRefreshToken());
-
         if (jwtService.getTokenType(jwt) != JwtType.REFRESH) {
             throw new InvalidJwtTypeException("Token must be a refresh token");
         }
-
+        revokedTokenService.revoke(jwt);
         return generateTokenResponse(jwt.getSubject());
     }
 
