@@ -1,0 +1,12 @@
+
+${Ansi.BRIGHT_BLUE}██████╗  ██████╗ ████████╗ █████╗ ███████╗██╗  ██╗${Ansi.DEFAULT}
+${Ansi.BLUE}██╔══██╗██╔═══██╗╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝${Ansi.DEFAULT}
+${Ansi.CYAN}██║  ██║██║   ██║   ██║   ███████║███████╗█████╔╝ ${Ansi.DEFAULT}
+${Ansi.GREEN}██║  ██║██║   ██║   ██║   ██╔══██║╚════██║██╔═██╗ ${Ansi.DEFAULT}
+${Ansi.BRIGHT_GREEN}██████╔╝╚██████╔╝   ██║   ██║  ██║███████║██║  ██╗${Ansi.DEFAULT}
+${Ansi.BRIGHT_GREEN}╚═════╝  ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝${Ansi.DEFAULT}
+                                                        
+${Ansi.YELLOW}╔═══════════════════════════════════════════════╗${Ansi.DEFAULT}
+${Ansi.BRIGHT_YELLOW}║ ${Ansi.MAGENTA}:: Spring Boot v${spring-boot.version} ::${Ansi.BRIGHT_YELLOW}                      ║${Ansi.DEFAULT}
+${Ansi.BRIGHT_YELLOW}║ ${Ansi.RED}:: Dotask API ::${Ansi.BRIGHT_YELLOW}                              ║${Ansi.DEFAULT}
+${Ansi.YELLOW}╚═══════════════════════════════════════════════╝${Ansi.DEFAULT}
