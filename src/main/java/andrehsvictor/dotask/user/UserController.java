@@ -24,9 +24,9 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PostMapping("/api/v1/users")
-    public GetUserDto create(@RequestBody @Valid PostUserDto postUserDto) {
+    public ResponseEntity<GetUserDto> create(@RequestBody @Valid PostUserDto postUserDto) {
         User user = userService.create(postUserDto);
-        return userMapper.userToGetUserDto(user);
+        return ResponseEntity.status(201).body(userMapper.userToGetUserDto(user));
     }
 
     @GetMapping("/api/v1/users/me")

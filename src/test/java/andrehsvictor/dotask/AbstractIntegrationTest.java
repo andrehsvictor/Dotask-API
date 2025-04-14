@@ -43,7 +43,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     @BeforeEach
-    void setUp() {
+    void beforeEach() {
         RestAssured.baseURI = BASE_URL + port;
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }

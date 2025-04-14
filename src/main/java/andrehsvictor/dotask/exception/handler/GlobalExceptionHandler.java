@@ -19,13 +19,16 @@ import andrehsvictor.dotask.exception.TokenExpiredException;
 import andrehsvictor.dotask.exception.UnauthorizedException;
 import andrehsvictor.dotask.exception.dto.ErrorDto;
 import andrehsvictor.dotask.exception.dto.FieldErrorDto;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<ErrorDto<String>> handleAllExceptions(Exception ex) {
         ErrorDto<String> errorDto = ErrorDto.of("An internal error occurred");
+        log.error("An internal error occurred", ex);
         return ResponseEntity
                 .status(500)
                 .body(errorDto);
