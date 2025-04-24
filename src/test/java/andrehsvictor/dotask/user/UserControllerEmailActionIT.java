@@ -1,6 +1,8 @@
 package andrehsvictor.dotask.user;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -95,7 +97,8 @@ class UserControllerEmailActionIT extends AbstractIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("$", hasKey("errors"))
-                .body("errors", hasKey("url"));
+                .body("errors", hasKey("url"))
+                .body("errors.url", hasEntry("url", "must be a valid URL"));
     }
 
     @Test
