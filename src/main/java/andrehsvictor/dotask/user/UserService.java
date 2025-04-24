@@ -122,6 +122,9 @@ public class UserService {
                 && existsByEmail(putUserDto.getEmail())) {
             throw new EmailAlreadyExistsException(putUserDto.getEmail());
         }
+        if (putUserDto.getEmail() != null && !putUserDto.getEmail().equals(user.getEmail())) {
+            user.setEmailVerified(false);
+        }
         userMapper.updateUserFromPutUserDto(putUserDto, user);
         return userRepository.save(user);
     }

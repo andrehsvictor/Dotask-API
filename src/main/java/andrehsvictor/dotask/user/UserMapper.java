@@ -1,7 +1,9 @@
 package andrehsvictor.dotask.user;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import andrehsvictor.dotask.user.dto.GetUserDto;
 import andrehsvictor.dotask.user.dto.PostUserDto;
@@ -14,6 +16,7 @@ public interface UserMapper {
 
     User postUserDtoToUser(PostUserDto postUserDto);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     User updateUserFromPutUserDto(PutUserDto putUserDto, @MappingTarget User user);
 
 }

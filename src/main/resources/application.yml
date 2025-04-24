@@ -30,6 +30,10 @@ spring:
             enable: ${MAIL_STARTTLS_ENABLE:true}
             required: ${MAIL_STARTTLS_REQUIRED:false}
 
+logging:
+  level:
+    org.springframework.security: INFO
+
 security:
   token:
     jwt:

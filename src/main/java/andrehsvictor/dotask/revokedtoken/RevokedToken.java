@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tasks")
+@Table(name = "revoked_tokens")
 public class RevokedToken implements Serializable {
 
     private static final long serialVersionUID = 842414051409323194L;
