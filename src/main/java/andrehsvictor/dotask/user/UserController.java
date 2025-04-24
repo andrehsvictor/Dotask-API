@@ -40,7 +40,7 @@ public class UserController {
         return userService.toDto(user);
     }
 
-    @PostMapping("/api/v1/users/email")
+    @PostMapping("/api/v1/users/send-action-email")
     public ResponseEntity<?> sendActionEmail(@RequestBody @Valid SendActionEmailDto sendActionEmailDto) {
         userService.sendActionEmail(sendActionEmailDto);
         return ResponseEntity.noContent().build();

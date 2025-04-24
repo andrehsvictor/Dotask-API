@@ -42,7 +42,7 @@ public class SecurityConfig {
     private static final String[] ACCOUNT_MANAGEMENT_ENDPOINTS = {
             "/api/v1/users/email/verify",
             "/api/v1/users/password/reset",
-            "/api/v1/users/email"
+            "/api/v1/users/send-action-email",
     };
 
     private static final String[] DOCUMENTATION_ENDPOINTS = {
