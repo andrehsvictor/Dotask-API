@@ -21,24 +21,23 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @PostMapping("/api/v1/users")
     public ResponseEntity<GetUserDto> create(@RequestBody @Valid PostUserDto postUserDto) {
         User user = userService.create(postUserDto);
-        return ResponseEntity.status(201).body(userMapper.userToGetUserDto(user));
+        return ResponseEntity.status(201).body(userService.toDto(user));
     }
 
     @GetMapping("/api/v1/users/me")
     public GetUserDto findMe() {
         User user = userService.findMe();
-        return userMapper.userToGetUserDto(user);
+        return userService.toDto(user);
     }
 
     @PutMapping("/api/v1/users/me")
     public GetUserDto updateMe(@RequestBody @Valid PutUserDto putUserDto) {
         User user = userService.updateMe(putUserDto);
-        return userMapper.userToGetUserDto(user);
+        return userService.toDto(user);
     }
 
     @PostMapping("/api/v1/users/email")
