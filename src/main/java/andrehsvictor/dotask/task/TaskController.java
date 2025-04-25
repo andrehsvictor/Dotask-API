@@ -32,7 +32,7 @@ public class TaskController {
 
     @GetMapping("/api/v1/tasks")
     public ResponseEntity<Page<GetTaskDto>> findAll(
-            @RequestParam(name = "q") String query,
+            @RequestParam(name = "q", defaultValue = "null") String query,
             TaskStatus status,
             TaskPriority priority,
             LocalDate startDate,
@@ -40,6 +40,7 @@ public class TaskController {
             Boolean hasProject,
             Pageable pageable) {
         query = StringNormalizer.normalize(query);
+        System.out.println("Query: " + query);
         Page<Task> tasks = taskService.findAllWithFilters(query,
                 status,
                 priority,

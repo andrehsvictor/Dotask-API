@@ -24,14 +24,15 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             WHERE t.user.id = :userId
             AND t.project.id = :projectId
             AND (
-            LOWER(t.title) LIKE LOWER(CONCAT('%', :query, '%'))
-            OR LOWER(t.project.name) LIKE LOWER(CONCAT('%', :query, '%'))
+            :query IS NULL OR (
+                LOWER(t.title) LIKE LOWER(CONCAT('%', :query, '%'))
+                OR LOWER(t.project.name) LIKE LOWER(CONCAT('%', :query, '%'))
+            )
             )
             AND (:status IS NULL OR t.status = :status)
             AND (:priority IS NULL OR t.priority = :priority)
             AND (:startDate IS NULL OR t.dueDate >= :startDate)
             AND (:endDate IS NULL OR t.dueDate <= :endDate)
-            AND (:startDate IS NULL AND :endDate IS NULL OR t.dueDate BETWEEN :startDate AND :endDate)
             AND (:hasProject IS NULL OR (
                 :hasProject = true AND t.project IS NOT NULL
                 OR :hasProject = false AND t.project IS NULL)
@@ -57,17 +58,18 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             FROM Task t
             WHERE t.user.id = :userId
             AND (
-            LOWER(t.title) LIKE LOWER(CONCAT('%', :query, '%'))
-            OR LOWER(t.project.name) LIKE LOWER(CONCAT('%', :query, '%'))
+            :query IS NULL OR (
+                LOWER(t.title) LIKE LOWER(CONCAT('%', :query, '%'))
+                OR LOWER(t.project.name) LIKE LOWER(CONCAT('%', :query, '%'))
             )
             AND (:status IS NULL OR t.status = :status)
             AND (:priority IS NULL OR t.priority = :priority)
             AND (:startDate IS NULL OR t.dueDate >= :startDate)
             AND (:endDate IS NULL OR t.dueDate <= :endDate)
-            AND (:startDate IS NULL AND :endDate IS NULL OR t.dueDate BETWEEN :startDate AND :endDate)
             AND (:hasProject IS NULL OR (
                 :hasProject = true AND t.project IS NOT NULL
                 OR :hasProject = false AND t.project IS NULL)
+            )
             )
             """)
     @QueryHints({

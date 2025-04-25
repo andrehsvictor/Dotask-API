@@ -85,9 +85,17 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldCreateTask() {
+        String title = faker.lorem().sentence(3);
+        if (title.length() > 50) {
+            title = title.substring(0, 49);
+        }
+        String description = faker.lorem().paragraph();
+        if (description.length() > 200) {
+            description = description.substring(0, 199);
+        }
         PostTaskDto taskDto = PostTaskDto.builder()
-                .title(faker.lorem().sentence(3))
-                .description(faker.lorem().paragraph())
+                .title(title)
+                .description(description)
                 .status("PENDING")
                 .priority("MEDIUM")
                 .dueDate(LocalDate.now().plusDays(5).toString())
@@ -143,7 +151,7 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
         given()
                 .header("Authorization", "Bearer " + accessToken)
-                .queryParam("q", "")
+                // .queryParam("q", "")
                 .when()
                 .get("/api/v1/tasks")
                 .then()
@@ -292,9 +300,17 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
     private void createTestTask() {
         if (taskId == null) {
+            String description = faker.lorem().paragraph();
+            if (description.length() > 200) {
+                description = description.substring(0, 199);
+            }
+            String title = faker.lorem().sentence(3);
+            if (title.length() > 50) {
+                title = title.substring(0, 49);
+            }
             PostTaskDto taskDto = PostTaskDto.builder()
-                    .title(faker.lorem().sentence(3))
-                    .description(faker.lorem().paragraph())
+                    .title(title)
+                    .description(description)
                     .status("PENDING")
                     .priority("MEDIUM")
                     .dueDate(LocalDate.now().plusDays(5).toString())

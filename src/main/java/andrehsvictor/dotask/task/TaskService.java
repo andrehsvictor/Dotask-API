@@ -78,7 +78,7 @@ public class TaskService {
                 pageable);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Task create(PostTaskDto postTaskDto) {
         Task task = taskMapper.postTaskDtoToTask(postTaskDto);
         User user = userService.findMe();
@@ -87,7 +87,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Task create(UUID projectId, PostTaskDto postTaskDto) {
         Task task = taskMapper.postTaskDtoToTask(postTaskDto);
         User user = userService.findMe();
