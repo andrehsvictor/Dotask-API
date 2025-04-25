@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +21,6 @@ import andrehsvictor.dotask.task.dto.GetTaskDto;
 import andrehsvictor.dotask.task.dto.PostTaskDto;
 import andrehsvictor.dotask.task.dto.PutTaskDto;
 import andrehsvictor.dotask.util.StringNormalizer;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -83,7 +83,7 @@ public class TaskController {
     }
 
     @PostMapping("/api/v1/tasks")
-    public ResponseEntity<GetTaskDto> create(PostTaskDto postTaskDto) {
+    public ResponseEntity<GetTaskDto> create(@RequestBody @Valid PostTaskDto postTaskDto) {
         Task task = taskService.create(postTaskDto);
         GetTaskDto taskDto = taskService.toDto(task);
         return ResponseEntity.status(201).body(taskDto);
@@ -91,7 +91,7 @@ public class TaskController {
 
     @PostMapping("/api/v1/projects/{projectId}/tasks")
     public ResponseEntity<GetTaskDto> create(
-            @PathVariable UUID projectId, PostTaskDto postTaskDto) {
+            @PathVariable UUID projectId, @RequestBody @Valid PostTaskDto postTaskDto) {
         Task task = taskService.create(projectId, postTaskDto);
         GetTaskDto taskDto = taskService.toDto(task);
         return ResponseEntity.status(201).body(taskDto);

@@ -1,6 +1,8 @@
 package andrehsvictor.dotask.user;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -84,12 +86,22 @@ class UserControllerPasswordResetIT extends AbstractIntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "short", "nouppercase123", "NOLOWERCASE123", "NoSpecialChar123", "NoNumber@abc" })
+    @ValueSource(strings = { "nouppercase123", "NOLOWERCASE123", "NoSpecialChar123", "NoNumber@abc" })
     void shouldReturn400WhenResettingPasswordWithWeakPassword(String weakPassword) {
         ResetPasswordTokenDto weakPasswordDto = ResetPasswordTokenDto.builder()
                 .token(validToken)
                 .newPassword(weakPassword)
                 .build();
+
+        /*
+         * java.lang.AssertionError: 1 expectation failed.
+         * JSON path errors doesn't match.
+         * Expected: map containing ["newPassword"-]ANYTHING]
+         * Actual: [[{field=newPassword, message=Password must contain at least one
+         * digit, one lowercase, one uppercase, one special character, and no
+         * whitespace}, {field=newPassword, message=Password must be between 8 and 255
+         * characters}]]
+         */
 
         given()
                 .contentType(ContentType.JSON)
@@ -98,8 +110,31 @@ class UserControllerPasswordResetIT extends AbstractIntegrationTest {
                 .post("/api/v1/users/password/reset")
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("errors", hasItems(
+                        hasEntry("field", "newPassword"),
+                        hasEntry("message",
+                                "Password must contain at least one digit, one lowercase, one uppercase, one special character, and no whitespace")));
+    }
+
+    @Test
+    void shouldReturn400WhenResettingPasswordWithShortPassword() {
+        String shortPassword = "short";
+        ResetPasswordTokenDto shortPasswordDto = ResetPasswordTokenDto.builder()
+                .token(validToken)
+                .newPassword(shortPassword)
+                .build();
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(shortPasswordDto)
+                .when()
+                .post("/api/v1/users/password/reset")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("$", hasKey("errors"))
-                .body("errors", hasKey("newPassword"));
+                .body("errors", hasItems(
+                        hasEntry("field", "newPassword"),
+                        hasEntry("message", "Password must be between 8 and 255 characters")));
     }
 
     @ParameterizedTest
@@ -110,6 +145,13 @@ class UserControllerPasswordResetIT extends AbstractIntegrationTest {
                 .newPassword(faker.internet().password(8, 20, true, true, true))
                 .build();
 
+        /*
+         * java.lang.AssertionError: 1 expectation failed.
+         * JSON path errors doesn't match.
+         * Expected: map containing ["token"-]ANYTHING]
+         * Actual: [[{field=token, message=Token is required}]]
+         */
+
         given()
                 .contentType(ContentType.JSON)
                 .body(emptyTokenDto)
@@ -118,7 +160,9 @@ class UserControllerPasswordResetIT extends AbstractIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("$", hasKey("errors"))
-                .body("errors", hasKey("token"));
+                .body("errors", hasItems(
+                        hasEntry("field", "token"),
+                        hasEntry("message", "Token is required")));
     }
 
     @ParameterizedTest

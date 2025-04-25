@@ -1,7 +1,9 @@
 package andrehsvictor.dotask.user;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -77,13 +79,10 @@ class UserControllerEmailVerificationIT extends AbstractIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/api/v1/users/" + testUser.getId())
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("emailVerified", equalTo(true));
+        User updatedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        assertThat(updatedUser.isEmailVerified()).isTrue();
+        assertThat(updatedUser.getEmailVerificationToken()).isNull();
+        assertThat(updatedUser.getEmailVerificationTokenExpiresAt()).isNull();
     }
 
     @ParameterizedTest
@@ -99,7 +98,9 @@ class UserControllerEmailVerificationIT extends AbstractIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("$", hasKey("errors"))
-                .body("errors", hasKey("token"));
+                .body("errors", hasItems(
+                        hasEntry("field", "token"),
+                        hasEntry("message", "Token is required")));
     }
 
     @ParameterizedTest

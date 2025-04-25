@@ -2,9 +2,11 @@ package andrehsvictor.dotask.token.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class PostRefreshTokenDto {
 
     @NotBlank(message = "Refresh token is required")

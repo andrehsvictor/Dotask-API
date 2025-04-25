@@ -40,11 +40,13 @@ public class Task implements Serializable {
     private String title;
     private String description;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private TaskStatus status;
+    private TaskStatus status = TaskStatus.PENDING;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private TaskPriority priority;
+    private TaskPriority priority = TaskPriority.LOW;
 
     private LocalDate dueDate;
 
@@ -64,8 +66,6 @@ public class Task implements Serializable {
     protected void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.status = TaskStatus.PENDING;
-        this.priority = TaskPriority.LOW;
     }
 
     @PreUpdate
