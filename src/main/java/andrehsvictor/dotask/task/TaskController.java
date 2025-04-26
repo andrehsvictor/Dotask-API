@@ -35,12 +35,11 @@ public class TaskController {
             @RequestParam(name = "q", required = false) String query,
             TaskStatus status,
             TaskPriority priority,
-            LocalDate startDate,
-            LocalDate endDate,
+            @RequestParam(name = "dueDate.from", required = false) LocalDate startDate,
+            @RequestParam(name = "dueDate.to", required = false) LocalDate endDate,
             Boolean hasProject,
             Pageable pageable) {
         query = StringNormalizer.normalize(query);
-        System.out.println("Query: " + query);
         Page<Task> tasks = taskService.findAllWithFilters(query,
                 status,
                 priority,
@@ -55,11 +54,11 @@ public class TaskController {
     @GetMapping("/api/v1/projects/{projectId}/tasks")
     public ResponseEntity<Page<GetTaskDto>> findAllByProjectId(
             @PathVariable UUID projectId,
-            @RequestParam(name = "q") String query,
+            @RequestParam(name = "q", required = false) String query,
             TaskStatus status,
             TaskPriority priority,
-            LocalDate startDate,
-            LocalDate endDate,
+            @RequestParam(name = "dueDate.from", required = false) LocalDate startDate,
+            @RequestParam(name = "dueDate.to", required = false) LocalDate endDate,
             Boolean hasProject,
             Pageable pageable) {
         query = StringNormalizer.normalize(query);
