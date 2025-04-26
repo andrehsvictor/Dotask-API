@@ -32,7 +32,7 @@ public class TaskController {
 
     @GetMapping("/api/v1/tasks")
     public ResponseEntity<Page<GetTaskDto>> findAll(
-            @RequestParam(name = "q", defaultValue = "null") String query,
+            @RequestParam(name = "q", required = false) String query,
             TaskStatus status,
             TaskPriority priority,
             LocalDate startDate,
