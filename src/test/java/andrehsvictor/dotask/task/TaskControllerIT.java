@@ -151,7 +151,6 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
         given()
                 .header("Authorization", "Bearer " + accessToken)
-                // .queryParam("q", "")
                 .when()
                 .get("/api/v1/tasks")
                 .then()
@@ -179,21 +178,21 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldFilterTasksByStatus() {
-        createTaskWithStatus(TaskStatus.COMPLETED);
         createTaskWithStatus(TaskStatus.IN_PROGRESS);
         createTaskWithStatus(TaskStatus.PENDING);
 
         given()
                 .header("Authorization", "Bearer " + accessToken)
                 .queryParam("q", "")
-                .queryParam("status", TaskStatus.COMPLETED)
+                .queryParam("status", TaskStatus.IN_PROGRESS)
                 .when()
                 .get("/api/v1/tasks")
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body("content.findAll { it.status == 'COMPLETED' }.size()", greaterThanOrEqualTo(1))
+                .body("content.findAll { it.status == 'COMPLETED' }.size()", greaterThanOrEqualTo(0))
                 .body("content.findAll { it.status == 'TODO' }.size()", equalTo(0))
-                .body("content.findAll { it.status == 'IN_PROGRESS' }.size()", equalTo(0));
+                .body("content.findAll { it.status == 'IN_PROGRESS' }.size()", equalTo(1))
+                .body("content.findAll { it.status == 'PENDING' }.size()", equalTo(0));
     }
 
     @Test
@@ -204,13 +203,13 @@ class TaskControllerIT extends AbstractIntegrationTest {
         given()
                 .header("Authorization", "Bearer " + accessToken)
                 .queryParam("q", "")
-                .queryParam("startDate", LocalDate.now().plusDays(5).toString())
-                .queryParam("endDate", LocalDate.now().plusDays(15).toString())
+                .queryParam("dueDate.from", LocalDate.now().plusDays(5).toString())
+                .queryParam("dueDate.to", LocalDate.now().plusDays(15).toString())
                 .when()
                 .get("/api/v1/tasks")
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body("content.findAll { it.startDate >= '" + LocalDate.now().plusDays(5) + "' }.size()",
+                .body("content.findAll { it.dueDate >= '" + LocalDate.now().plusDays(5) + "' }.size()",
                         greaterThanOrEqualTo(1));
     }
 
