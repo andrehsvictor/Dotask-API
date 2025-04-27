@@ -35,13 +35,16 @@ public class Project implements Serializable {
 
     private String name;
     private String description;
-    private String color;
+
+    @Builder.Default
+    private String color = "#538083";
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Integer taskCount;
+    @Builder.Default
+    private Integer taskCount = 0;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -50,8 +53,6 @@ public class Project implements Serializable {
     protected void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.taskCount = 0;
-        this.color = "#538083";
     }
 
     @PreUpdate

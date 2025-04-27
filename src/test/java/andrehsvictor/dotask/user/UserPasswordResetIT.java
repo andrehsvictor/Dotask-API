@@ -170,7 +170,7 @@ class UserPasswordResetIT extends AbstractIntegrationTest {
     void shouldReturn404WhenResettingPasswordWithInvalidToken(String invalidToken) {
         ResetPasswordTokenDto invalidTokenDto = ResetPasswordTokenDto.builder()
                 .token(invalidToken)
-                .newPassword(faker.internet().password(8, 20, true, true, true))
+                .newPassword("ValidPassword123!")
                 .build();
 
         given()

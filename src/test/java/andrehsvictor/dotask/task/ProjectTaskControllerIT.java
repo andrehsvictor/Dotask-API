@@ -229,8 +229,12 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
         if (description.length() > 200) {
             description = description.substring(0, 199);
         }
+        String name = faker.app().name();
+        if (name.length() < 3) {
+            name = name + " " + faker.lorem().word();
+        }
         PostProjectDto projectDto = PostProjectDto.builder()
-                .name(faker.app().name())
+                .name(name)
                 .description(description)
                 .color("#" + faker.color().hex().substring(1))
                 .build();
