@@ -30,8 +30,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             )
             AND (:status IS NULL OR t.status = :status)
             AND (:priority IS NULL OR t.priority = :priority)
-            AND (:startDate IS NULL OR t.dueDate >= :startDate)
-            AND (:endDate IS NULL OR t.dueDate <= :endDate)
+            AND (t.dueDate >= :startDate OR CAST(:startDate AS date) IS NULL)
+            AND (t.dueDate <= :endDate OR CAST(:endDate AS date) IS NULL)
             """)
     @QueryHints({
             @QueryHint(name = "org.hibernate.fetchSize", value = "100"),
@@ -59,8 +59,8 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             )
             AND (:status IS NULL OR t.status = :status)
             AND (:priority IS NULL OR t.priority = :priority)
-            AND (CAST(:startDate AS date) IS NULL OR t.dueDate >= CAST(:startDate AS date))
-            AND (CAST(:endDate AS date) IS NULL OR t.dueDate <= CAST(:endDate AS date))
+            AND (t.dueDate >= :startDate OR CAST(:startDate AS date) IS NULL)
+            AND (t.dueDate <= :endDate OR CAST(:endDate AS date) IS NULL)
             AND (:hasProject IS NULL OR
                  (:hasProject = TRUE AND t.project IS NOT NULL) OR
                  (:hasProject = FALSE AND t.project IS NULL)
