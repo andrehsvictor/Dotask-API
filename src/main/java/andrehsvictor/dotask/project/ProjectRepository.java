@@ -21,8 +21,10 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
             SELECT p
             FROM Project p
             WHERE p.user.id = :userId
-            AND (:query IS NULL OR
-                LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')))
+            AND (
+                LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%'))
+                OR :query IS NULL
+            )
                 """)
     Page<Project> findAllByUserIdWithFilter(
             UUID userId,
