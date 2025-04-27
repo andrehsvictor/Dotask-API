@@ -1,6 +1,6 @@
 package andrehsvictor.dotask.project;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class ProjectController {
 
     @GetMapping("/api/v1/projects")
     public ResponseEntity<Page<GetProjectDto>> findAll(
-            @RequestParam(value = "q") String query,
+            @RequestParam(value = "q", required = false) String query,
             Pageable pageable) {
         Page<GetProjectDto> projects = projectService.findAll(query, pageable)
                 .map(projectService::toDto);
@@ -63,8 +63,8 @@ public class ProjectController {
     }
 
     @DeleteMapping("/api/v1/projects")
-    public ResponseEntity<Void> deleteAllByIdIn(@RequestParam UUID[] ids) {
-        projectService.deleteAllByIdIn(List.of(ids));
+    public ResponseEntity<Void> deleteAllByIdIn(@RequestBody Collection<UUID> ids) {
+        projectService.deleteAllByIdIn(ids);
         return ResponseEntity.noContent().build();
     }
 
