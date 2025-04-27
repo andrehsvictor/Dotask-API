@@ -27,7 +27,7 @@ import andrehsvictor.dotask.user.dto.PostUserDto;
 import io.restassured.http.ContentType;
 import net.datafaker.Faker;
 
-class UserControllerEmailVerificationIT extends AbstractIntegrationTest {
+class UserEmailVerificationIT extends AbstractIntegrationTest {
 
     @MockitoBean
     private EmailService emailService;

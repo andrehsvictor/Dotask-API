@@ -26,7 +26,7 @@ import andrehsvictor.dotask.user.dto.ResetPasswordTokenDto;
 import io.restassured.http.ContentType;
 import net.datafaker.Faker;
 
-class UserControllerPasswordResetIT extends AbstractIntegrationTest {
+class UserPasswordResetIT extends AbstractIntegrationTest {
 
     @MockitoBean
     private EmailService emailService;

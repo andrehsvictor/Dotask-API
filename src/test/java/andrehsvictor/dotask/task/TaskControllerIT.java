@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,12 @@ class TaskControllerIT extends AbstractIntegrationTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract()
                 .path("accessToken");
+    }
+
+    @AfterEach
+    void tearDown() {
+        taskRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -217,9 +224,19 @@ class TaskControllerIT extends AbstractIntegrationTest {
     void shouldUpdateTask() {
         createTestTask();
 
+        String title = faker.lorem().sentence(3);
+        if (title.length() > 50) {
+            title = title.substring(0, 49);
+        }
+
+        String description = faker.lorem().paragraph();
+        if (description.length() > 200) {
+            description = description.substring(0, 199);
+        }
+
         PutTaskDto updateDto = PutTaskDto.builder()
-                .title(faker.lorem().sentence(3))
-                .description(faker.lorem().paragraph())
+                .title(title)
+                .description(description)
                 .status("IN_PROGRESS")
                 .priority("HIGH")
                 .dueDate(LocalDate.now().plusDays(7).toString())
@@ -400,9 +417,17 @@ class TaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTaskWithDate(LocalDate date) {
+        String title = faker.lorem().sentence(3);
+        if (title.length() > 50) {
+            title = title.substring(0, 49);
+        }
+        String description = faker.lorem().paragraph();
+        if (description.length() > 200) {
+            description = description.substring(0, 199);
+        }
         PostTaskDto taskDto = PostTaskDto.builder()
-                .title(faker.lorem().sentence(3))
-                .description(faker.lorem().paragraph())
+                .title(title)
+                .description(description)
                 .status("PENDING")
                 .priority("MEDIUM")
                 .dueDate(date.toString())
@@ -413,7 +438,9 @@ class TaskControllerIT extends AbstractIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(taskDto)
                 .when()
-                .post("/api/v1/tasks");
+                .post("/api/v1/tasks")
+                .then()
+                .statusCode(HttpStatus.CREATED.value());
     }
 
     // private static class Map<K, V> {
