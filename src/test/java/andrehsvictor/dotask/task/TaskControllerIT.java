@@ -443,17 +443,4 @@ class TaskControllerIT extends AbstractIntegrationTest {
                 .statusCode(HttpStatus.CREATED.value());
     }
 
-    // private static class Map<K, V> {
-    // private final K key;
-    // private final V value;
-
-    // private Map(K key, V value) {
-    // this.key = key;
-    // this.value = value;
-    // }
-
-    // public static <K, V> Map<K, V> of(K key, V value) {
-    // return new Map<>(key, value);
-    // }
-    // }
 }
