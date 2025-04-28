@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,7 +30,6 @@ import andrehsvictor.dotask.task.TaskRepository;
 import andrehsvictor.dotask.user.UserRepository;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class ProjectControllerIT extends AbstractIntegrationTest {
 
@@ -45,11 +45,9 @@ class ProjectControllerIT extends AbstractIntegrationTest {
     @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired
-    private Faker faker;
-
     private String accessToken;
     private UUID projectId;
+    private int projectCounter = 0;
 
     @BeforeEach
     void setup() {
@@ -58,11 +56,11 @@ class ProjectControllerIT extends AbstractIntegrationTest {
         projectRepository.deleteAll();
         userRepository.deleteAll();
 
-        String email = faker.internet().emailAddress();
+        String email = "test-user-" + UUID.randomUUID() + "@example.com";
         String password = "Test123!@#";
 
         PostUserDto user = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Test User")
                 .email(email)
                 .password(password)
                 .build();
@@ -97,12 +95,9 @@ class ProjectControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldCreateProject() {
-        String projectName = faker.app().name();
-        String projectDescription = faker.lorem().paragraph();
-        if (projectDescription.length() > 200) {
-            projectDescription = projectDescription.substring(0, 199);
-        }
-        String projectColor = "#" + faker.color().hex().substring(1);
+        String projectName = "Test Project";
+        String projectDescription = "This is a test project description";
+        String projectColor = "#123456";
 
         PostProjectDto projectDto = PostProjectDto.builder()
                 .name(projectName)
@@ -172,7 +167,7 @@ class ProjectControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldFilterProjectsByQuery() {
-        String specialName = "UNIQUE_PROJECT_" + faker.app().name();
+        String specialName = "UNIQUE_PROJECT_TEST";
         createProjectWithName(specialName);
         createMultipleProjects(3);
 
@@ -191,12 +186,9 @@ class ProjectControllerIT extends AbstractIntegrationTest {
     void shouldUpdateProject() {
         createTestProject();
 
-        String newName = faker.app().name();
-        String newDescription = faker.lorem().paragraph();
-        if (newDescription.length() > 200) {
-            newDescription = newDescription.substring(0, 199);
-        }
-        String newColor = "#" + faker.color().hex().substring(1);
+        String newName = "Updated Project";
+        String newDescription = "Updated project description";
+        String newColor = "#654321";
 
         PutProjectDto updateDto = PutProjectDto.builder()
                 .name(newName)
@@ -239,9 +231,9 @@ class ProjectControllerIT extends AbstractIntegrationTest {
     @Test
     void shouldReturnUnauthorizedWhenCreatingProjectWithoutAuthentication() {
         PostProjectDto projectDto = PostProjectDto.builder()
-                .name(faker.app().name())
-                .description(faker.lorem().paragraph())
-                .color("#" + faker.color().hex().substring(1))
+                .name("Test Project")
+                .description("This is a test project description")
+                .color("#123456")
                 .build();
 
         given()
@@ -255,15 +247,10 @@ class ProjectControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400WhenCreatingProjectWithEmptyName() {
-        String projectDescription = faker.lorem().paragraph();
-        if (projectDescription.length() > 200) {
-            projectDescription = projectDescription.substring(0, 199);
-        }
-
         PostProjectDto invalidProject = PostProjectDto.builder()
                 .name("")
-                .description(projectDescription)
-                .color("#" + faker.color().hex().substring(1))
+                .description("This is a test project description")
+                .color("#123456")
                 .build();
 
         given()
@@ -280,8 +267,8 @@ class ProjectControllerIT extends AbstractIntegrationTest {
     @Test
     void shouldReturn400WhenCreatingProjectWithInvalidColor() {
         PostProjectDto invalidProject = PostProjectDto.builder()
-                .name(faker.app().name())
-                .description(faker.lorem().paragraph())
+                .name("Test Project")
+                .description("This is a test project description")
                 .color("invalid-color")
                 .build();
 
@@ -302,8 +289,8 @@ class ProjectControllerIT extends AbstractIntegrationTest {
 
         PutProjectDto invalidUpdate = PutProjectDto.builder()
                 .name("")
-                .description(faker.lorem().paragraph())
-                .color("#" + faker.color().hex().substring(1))
+                .description("This is a test project description")
+                .color("#123456")
                 .build();
 
         given()
@@ -321,15 +308,10 @@ class ProjectControllerIT extends AbstractIntegrationTest {
     void shouldReturnNotFoundWhenUpdatingNonExistentProject() {
         UUID nonExistentId = UUID.randomUUID();
 
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
-
         PutProjectDto updateDto = PutProjectDto.builder()
-                .name(faker.app().name())
-                .description(description)
-                .color("#" + faker.color().hex().substring(1))
+                .name("Updated Project")
+                .description("Updated project description")
+                .color("#123456")
                 .build();
 
         given()
@@ -360,11 +342,11 @@ class ProjectControllerIT extends AbstractIntegrationTest {
         createTestProject();
 
         // Create a second user and get their token
-        String email2 = faker.internet().emailAddress();
+        String email2 = "test-user2-" + UUID.randomUUID() + "@example.com";
         String password2 = "Test123!@#";
 
         PostUserDto user2 = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Test User 2")
                 .email(email2)
                 .password(password2)
                 .build();
@@ -403,22 +385,16 @@ class ProjectControllerIT extends AbstractIntegrationTest {
         // Create project
         createTestProject();
 
-        // Add a task to the project
-        String taskTitle = faker.lorem().sentence(3);
-        if (taskTitle.length() > 50) {
-            taskTitle = taskTitle.substring(0, 49);
-        }
-
         // Create task in project
         given()
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(ContentType.JSON)
                 .body(Map.of(
-                        "title", taskTitle,
+                        "title", "Test Task",
                         "description", "Test description",
                         "status", "PENDING",
                         "priority", "MEDIUM",
-                        "dueDate", java.time.LocalDate.now().plusDays(1).toString()))
+                        "dueDate", LocalDate.now().plusDays(1).toString()))
                 .when()
                 .post("/api/v1/projects/{projectId}/tasks", projectId)
                 .then()
@@ -443,15 +419,9 @@ class ProjectControllerIT extends AbstractIntegrationTest {
 
     private void createTestProject() {
         if (projectId == null) {
-            String projectName = faker.app().name();
-            if (projectName.length() < 3) {
-                projectName = faker.app().name() + " " + faker.app().name();
-            }
-            String projectDescription = faker.lorem().paragraph();
-            if (projectDescription.length() > 200) {
-                projectDescription = projectDescription.substring(0, 199);
-            }
-            String projectColor = "#" + faker.color().hex().substring(1);
+            String projectName = "Test Project";
+            String projectDescription = "This is a test project description";
+            String projectColor = "#123456";
 
             PostProjectDto projectDto = PostProjectDto.builder()
                     .name(projectName)
@@ -474,12 +444,10 @@ class ProjectControllerIT extends AbstractIntegrationTest {
     }
 
     private UUID createProjectAndReturnId() {
-        String projectName = faker.app().name();
-        String projectDescription = faker.lorem().paragraph();
-        if (projectDescription.length() > 200) {
-            projectDescription = projectDescription.substring(0, 199);
-        }
-        String projectColor = "#" + faker.color().hex().substring(1);
+        projectCounter++;
+        String projectName = "Test Project " + projectCounter;
+        String projectDescription = "This is test project description " + projectCounter;
+        String projectColor = "#" + (123456 + projectCounter);
 
         PostProjectDto projectDto = PostProjectDto.builder()
                 .name(projectName)
@@ -506,11 +474,8 @@ class ProjectControllerIT extends AbstractIntegrationTest {
     }
 
     private void createProjectWithName(String name) {
-        String projectDescription = faker.lorem().paragraph();
-        if (projectDescription.length() > 200) {
-            projectDescription = projectDescription.substring(0, 199);
-        }
-        String projectColor = "#" + faker.color().hex().substring(1);
+        String projectDescription = "Project with specific name: " + name;
+        String projectColor = "#123456";
 
         PostProjectDto projectDto = PostProjectDto.builder()
                 .name(name)

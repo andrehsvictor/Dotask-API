@@ -10,6 +10,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +26,6 @@ import andrehsvictor.dotask.email.EmailService;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import andrehsvictor.dotask.user.dto.SendActionEmailDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class UserEmailSendingIT extends AbstractIntegrationTest {
 
@@ -34,22 +35,19 @@ class UserEmailSendingIT extends AbstractIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private Faker faker;
-
     private String userEmail;
 
     @BeforeEach
     void setup() {
         doNothing().when(emailService).send(anyString(), anyString(), anyString());
 
-        userEmail = faker.internet().emailAddress();
+        userEmail = "test-email-" + UUID.randomUUID() + "@example.com";
 
         if (!userRepository.findByEmail(userEmail).isPresent()) {
             PostUserDto newUser = PostUserDto.builder()
-                    .name(faker.name().fullName())
+                    .name("Test User")
                     .email(userEmail)
-                    .password(faker.internet().password(8, 20, true, true, true))
+                    .password("TestPassword123!")
                     .build();
 
             given()
@@ -66,7 +64,7 @@ class UserEmailSendingIT extends AbstractIntegrationTest {
         SendActionEmailDto actionEmailDto = SendActionEmailDto.builder()
                 .action(action)
                 .email(userEmail)
-                .url(faker.internet().url())
+                .url("https://example.com/action?token=test-token")
                 .build();
 
         given()
@@ -89,13 +87,6 @@ class UserEmailSendingIT extends AbstractIntegrationTest {
                 .url(invalidUrl)
                 .build();
 
-        /*
-         * java.lang.AssertionError: 1 expectation failed.
-         * JSON path errors doesn't match.
-         * Expected: map containing ["url"-]ANYTHING]
-         * Actual: [[{field=url, message=URL must start with http:// or https://}]]
-         */
-
         given()
                 .contentType(ContentType.JSON)
                 .body(invalidUrlAction)
@@ -115,14 +106,6 @@ class UserEmailSendingIT extends AbstractIntegrationTest {
                 .action(EmailSendingAction.VERIFY_EMAIL)
                 .build();
 
-        /*
-         * java.lang.AssertionError: 1 expectation failed.
-         * JSON path errors doesn't match.
-         * Expected: map containing ["email"-]ANYTHING]
-         * Actual: [[{field=email, message=Email is required}, {field=url, message=URL
-         * is required}]]
-         */
-
         given()
                 .contentType(ContentType.JSON)
                 .body(missingFieldsAction)
@@ -140,12 +123,12 @@ class UserEmailSendingIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn404WhenSendingActionEmailToNonExistentUser() {
-        String nonExistentEmail = "non-existent-" + faker.internet().emailAddress();
+        String nonExistentEmail = "non-existent-" + UUID.randomUUID() + "@example.com";
 
         SendActionEmailDto nonExistentUserAction = SendActionEmailDto.builder()
                 .action(EmailSendingAction.VERIFY_EMAIL)
                 .email(nonExistentEmail)
-                .url(faker.internet().url())
+                .url("https://example.com/verify?token=test-token")
                 .build();
 
         given()

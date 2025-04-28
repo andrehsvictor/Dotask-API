@@ -24,7 +24,6 @@ import andrehsvictor.dotask.email.EmailService;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import andrehsvictor.dotask.user.dto.ResetPasswordTokenDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class UserPasswordResetIT extends AbstractIntegrationTest {
 
@@ -37,9 +36,6 @@ class UserPasswordResetIT extends AbstractIntegrationTest {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private Faker faker;
-
     private User testUser;
     private String validToken;
     private String validPassword;
@@ -48,12 +44,12 @@ class UserPasswordResetIT extends AbstractIntegrationTest {
     void setup() {
         doNothing().when(emailService).send(anyString(), anyString(), anyString());
 
-        String email = faker.internet().emailAddress();
-        validPassword = faker.internet().password(8, 20, true, true, true);
+        String email = "test-user-" + UUID.randomUUID() + "@example.com";
+        validPassword = "ValidPassword123!";
 
         testUser = userRepository.findByEmail(email).orElseGet(() -> {
             PostUserDto newUser = PostUserDto.builder()
-                    .name(faker.name().fullName())
+                    .name("Test User")
                     .email(email)
                     .password(validPassword)
                     .build();
@@ -70,7 +66,7 @@ class UserPasswordResetIT extends AbstractIntegrationTest {
 
     @Test
     void shouldResetPasswordWithValidToken() {
-        String newPassword = faker.internet().password(8, 20, true, true, true);
+        String newPassword = "NewValidPassword456@";
         ResetPasswordTokenDto resetPasswordDto = ResetPasswordTokenDto.builder()
                 .token(validToken)
                 .newPassword(newPassword)
@@ -92,16 +88,6 @@ class UserPasswordResetIT extends AbstractIntegrationTest {
                 .token(validToken)
                 .newPassword(weakPassword)
                 .build();
-
-        /*
-         * java.lang.AssertionError: 1 expectation failed.
-         * JSON path errors doesn't match.
-         * Expected: map containing ["newPassword"-]ANYTHING]
-         * Actual: [[{field=newPassword, message=Password must contain at least one
-         * digit, one lowercase, one uppercase, one special character, and no
-         * whitespace}, {field=newPassword, message=Password must be between 8 and 255
-         * characters}]]
-         */
 
         given()
                 .contentType(ContentType.JSON)
@@ -142,15 +128,8 @@ class UserPasswordResetIT extends AbstractIntegrationTest {
     void shouldReturn400WhenResettingPasswordWithEmptyToken(String emptyToken) {
         ResetPasswordTokenDto emptyTokenDto = ResetPasswordTokenDto.builder()
                 .token(emptyToken)
-                .newPassword(faker.internet().password(8, 20, true, true, true))
+                .newPassword("ValidNewPassword123!")
                 .build();
-
-        /*
-         * java.lang.AssertionError: 1 expectation failed.
-         * JSON path errors doesn't match.
-         * Expected: map containing ["token"-]ANYTHING]
-         * Actual: [[{field=token, message=Token is required}]]
-         */
 
         given()
                 .contentType(ContentType.JSON)
@@ -192,7 +171,7 @@ class UserPasswordResetIT extends AbstractIntegrationTest {
 
         ResetPasswordTokenDto expiredTokenDto = ResetPasswordTokenDto.builder()
                 .token(expiredToken)
-                .newPassword(faker.internet().password(8, 20, true, true, true))
+                .newPassword("AnotherValidPassword789!")
                 .build();
 
         given()

@@ -29,7 +29,6 @@ import andrehsvictor.dotask.task.dto.PutTaskDto;
 import andrehsvictor.dotask.user.UserRepository;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class TaskControllerIT extends AbstractIntegrationTest {
 
@@ -42,11 +41,9 @@ class TaskControllerIT extends AbstractIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private Faker faker;
-
     private String accessToken;
     private UUID taskId;
+    private int taskCounter = 0;
 
     @BeforeEach
     void setup() {
@@ -54,11 +51,11 @@ class TaskControllerIT extends AbstractIntegrationTest {
         taskRepository.deleteAll();
         userRepository.deleteAll();
 
-        String email = faker.internet().emailAddress();
+        String email = "test-user-" + UUID.randomUUID() + "@example.com";
         String password = "Test123!@#";
 
         PostUserDto user = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Test User")
                 .email(email)
                 .password(password)
                 .build();
@@ -92,14 +89,10 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldCreateTask() {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Test Task " + taskCounter;
+        String description = "This is test task description " + taskCounter;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -168,7 +161,7 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldFilterTasksByQuery() {
-        String specialTitle = "UNIQUE_TITLE_" + faker.lorem().word();
+        String specialTitle = "UNIQUE_TITLE_TEST_" + UUID.randomUUID().toString().substring(0, 8);
         createTaskWithTitle(specialTitle);
         createMultipleTasks(3);
 
@@ -224,15 +217,9 @@ class TaskControllerIT extends AbstractIntegrationTest {
     void shouldUpdateTask() {
         createTestTask();
 
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Updated Task " + taskCounter;
+        String description = "This is updated task description " + taskCounter;
 
         PutTaskDto updateDto = PutTaskDto.builder()
                 .title(title)
@@ -316,14 +303,10 @@ class TaskControllerIT extends AbstractIntegrationTest {
 
     private void createTestTask() {
         if (taskId == null) {
-            String description = faker.lorem().paragraph();
-            if (description.length() > 200) {
-                description = description.substring(0, 199);
-            }
-            String title = faker.lorem().sentence(3);
-            if (title.length() > 50) {
-                title = title.substring(0, 49);
-            }
+            taskCounter++;
+            String title = "Test Task " + taskCounter;
+            String description = "This is test task description " + taskCounter;
+
             PostTaskDto taskDto = PostTaskDto.builder()
                     .title(title)
                     .description(description)
@@ -347,14 +330,10 @@ class TaskControllerIT extends AbstractIntegrationTest {
     }
 
     private UUID createTaskAndReturnId() {
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
+        taskCounter++;
+        String title = "Test Task " + taskCounter;
+        String description = "This is test task description " + taskCounter;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -383,13 +362,9 @@ class TaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTaskWithTitle(String title) {
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
+        taskCounter++;
+        String description = "Task with specific title " + taskCounter;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -407,14 +382,10 @@ class TaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTaskWithStatus(TaskStatus status) {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Task with status " + status + " " + taskCounter;
+        String description = "This is a task with status " + status + " " + taskCounter;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -432,14 +403,10 @@ class TaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTaskWithDate(LocalDate date) {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Task with date " + date + " " + taskCounter;
+        String description = "This is a task with due date " + date + " " + taskCounter;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -457,5 +424,4 @@ class TaskControllerIT extends AbstractIntegrationTest {
                 .then()
                 .statusCode(HttpStatus.CREATED.value());
     }
-
 }

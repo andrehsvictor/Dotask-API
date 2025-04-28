@@ -25,7 +25,6 @@ import andrehsvictor.dotask.task.dto.PostTaskDto;
 import andrehsvictor.dotask.user.UserRepository;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class ProjectTaskControllerIT extends AbstractIntegrationTest {
 
@@ -38,11 +37,9 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
     @Autowired
     private ProjectRepository projectRepository;
 
-    @Autowired
-    private Faker faker;
-
     private String accessToken;
     private UUID projectId;
+    private int taskCounter = 0;
 
     @BeforeEach
     void setup() {
@@ -50,11 +47,11 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
         projectRepository.deleteAll();
         userRepository.deleteAll();
 
-        String email = faker.internet().emailAddress();
+        String email = "test-user-" + UUID.randomUUID() + "@example.com";
         String password = "Test123!@#";
 
         PostUserDto user = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Test User")
                 .email(email)
                 .password(password)
                 .build();
@@ -91,14 +88,9 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldCreateTaskWithProject() {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        String title = "Test Task Title";
+        String description = "This is a test task description";
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -198,14 +190,9 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
     @Test
     void shouldReturnNotFoundForNonExistentProject() {
         UUID nonExistentId = UUID.randomUUID();
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        String title = "Test Task Title";
+        String description = "This is a test task description";
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -225,18 +212,13 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTestProject() {
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
-        String name = faker.app().name();
-        if (name.length() < 3) {
-            name = name + " " + faker.lorem().word();
-        }
+        String description = "This is a test project description";
+        String name = "Test Project";
+
         PostProjectDto projectDto = PostProjectDto.builder()
                 .name(name)
                 .description(description)
-                .color("#" + faker.color().hex().substring(1))
+                .color("#123456")
                 .build();
 
         projectId = given()
@@ -253,14 +235,10 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
     }
 
     private UUID createTaskForProject() {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Project Task " + taskCounter;
+        String description = "This is a test task description " + taskCounter;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -288,14 +266,10 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTaskForProjectWithStatus(TaskStatus status) {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Task with status " + status + " " + taskCounter;
+        String description = "This is a task with status " + status;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -313,14 +287,10 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTaskForProjectWithPriority(String priority) {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Task with priority " + priority + " " + taskCounter;
+        String description = "This is a task with priority " + priority;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)
@@ -338,14 +308,10 @@ class ProjectTaskControllerIT extends AbstractIntegrationTest {
     }
 
     private void createTaskWithoutProject() {
-        String title = faker.lorem().sentence(3);
-        if (title.length() > 50) {
-            title = title.substring(0, 49);
-        }
-        String description = faker.lorem().paragraph();
-        if (description.length() > 200) {
-            description = description.substring(0, 199);
-        }
+        taskCounter++;
+        String title = "Task without project " + taskCounter;
+        String description = "This task is not associated with any project " + taskCounter;
+
         PostTaskDto taskDto = PostTaskDto.builder()
                 .title(title)
                 .description(description)

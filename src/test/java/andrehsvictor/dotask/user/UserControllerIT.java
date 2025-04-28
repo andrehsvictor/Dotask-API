@@ -1,6 +1,7 @@
 package andrehsvictor.dotask.user;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItems;
@@ -10,7 +11,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,15 +27,11 @@ import andrehsvictor.dotask.email.EmailService;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import andrehsvictor.dotask.user.dto.PutUserDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class UserControllerIT extends AbstractIntegrationTest {
 
     @MockitoBean
     private EmailService emailService;
-
-    @Autowired
-    private Faker faker;
 
     @Autowired
     private UserRepository userRepository;
@@ -46,9 +44,11 @@ class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldCreateUser() {
+        String email = "test-user-" + UUID.randomUUID() + "@example.com";
+
         PostUserDto validUser = PostUserDto.builder()
-                .name(faker.name().fullName())
-                .email(faker.internet().emailAddress())
+                .name("Test User")
+                .email(email)
                 .password("validPassword123!")
                 .build();
 
@@ -69,18 +69,18 @@ class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn409WhenCreatingUserWithExistingEmail() {
-        String email = faker.internet().emailAddress();
+        String email = "duplicate-user-" + UUID.randomUUID() + "@example.com";
 
         PostUserDto firstUser = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("First User")
                 .email(email)
-                .password(faker.internet().password(8, 20, true, true, true))
+                .password("ValidPassword123!")
                 .build();
 
         PostUserDto duplicateUser = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Duplicate User")
                 .email(email)
-                .password(faker.internet().password(8, 20, true, true, true))
+                .password("ValidPassword123!")
                 .build();
 
         given()
@@ -102,17 +102,10 @@ class UserControllerIT extends AbstractIntegrationTest {
     @ValueSource(strings = { "invalid-email", "email@", "@domain.com", "email@domain", "email.domain.com" })
     void shouldReturn400WhenCreatingUserWithInvalidEmail(String invalidEmail) {
         PostUserDto invalidUser = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Test User")
                 .email(invalidEmail)
-                .password(faker.internet().password(8, 20, true, true, true))
+                .password("ValidPassword123!")
                 .build();
-
-        /*
-         * java.lang.AssertionError: 1 expectation failed.
-         * JSON path errors doesn't match.
-         * Expected: map containing ["email"-]ANYTHING]
-         * Actual: [[{field=email, message=Invalid email format}]]
-         */
 
         given()
                 .contentType(ContentType.JSON)
@@ -129,9 +122,11 @@ class UserControllerIT extends AbstractIntegrationTest {
     @ParameterizedTest
     @ValueSource(strings = { "nouppercase123", "NOLOWERCASE123", "NoSpecialChar123", "NoNumber@abc" })
     void shouldReturn400WhenCreatingUserWithInvalidPassword(String invalidPassword) {
+        String email = "password-user-" + UUID.randomUUID() + "@example.com";
+
         PostUserDto invalidUser = PostUserDto.builder()
-                .name(faker.name().fullName())
-                .email(faker.internet().emailAddress())
+                .name("Test User")
+                .email(email)
                 .password(invalidPassword)
                 .build();
 
@@ -150,9 +145,11 @@ class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn400WhenCreatingUserWithShortPassword() {
+        String email = "short-password-user-" + UUID.randomUUID() + "@example.com";
+
         PostUserDto invalidUser = PostUserDto.builder()
-                .name(faker.name().fullName())
-                .email(faker.internet().emailAddress())
+                .name("Test User")
+                .email(email)
                 .password("short")
                 .build();
 
@@ -179,12 +176,14 @@ class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturnUnauthorizedWhenUpdatingMeWithoutAuthentication() {
+        String email = "unauthorized-user-" + UUID.randomUUID() + "@example.com";
+
         given()
                 .contentType(ContentType.JSON)
                 .body(PostUserDto.builder()
-                        .name(faker.name().fullName())
-                        .email(faker.internet().emailAddress())
-                        .password(faker.internet().password(8, 20, true, true, true))
+                        .name("Test User")
+                        .email(email)
+                        .password("ValidPassword123!")
                         .build())
                 .when()
                 .put("/api/v1/users/me")
@@ -194,11 +193,11 @@ class UserControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturnUserDetailsWhenFindingMeWithAuthentication() {
-        String email = faker.internet().emailAddress();
-        String password = faker.internet().password(8, 20, true, true, true);
+        String email = "auth-user-" + UUID.randomUUID() + "@example.com";
+        String password = "ValidPassword123!";
 
         PostUserDto newUser = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Authenticated User")
                 .email(email)
                 .password(password)
                 .build();
@@ -235,22 +234,22 @@ class UserControllerIT extends AbstractIntegrationTest {
                 .body("emailVerified", equalTo(true));
 
         verify(emailService, never()).send(anyString(), anyString(), anyString());
-
     }
 
     @Test
     void shouldReturnUserDetailsWhenUpdatingMeWithAuthentication() {
-        String email = faker.internet().emailAddress();
-        String password = faker.internet().password(8, 20, true, true, true);
+        String originalEmail = "original-user-" + UUID.randomUUID() + "@example.com";
+        String updatedEmail = "updated-user-" + UUID.randomUUID() + "@example.com";
+        String password = "ValidPassword123!";
 
         PutUserDto updateUser = PutUserDto.builder()
-                .name(faker.name().fullName())
-                .email(email)
+                .name("Updated User Name")
+                .email(updatedEmail)
                 .build();
 
         PostUserDto newUser = PostUserDto.builder()
-                .name(faker.name().fullName())
-                .email(faker.internet().emailAddress())
+                .name("Original User Name")
+                .email(originalEmail)
                 .password(password)
                 .build();
 
@@ -260,7 +259,7 @@ class UserControllerIT extends AbstractIntegrationTest {
                 .when()
                 .post("/api/v1/users");
 
-        User createdUser = userRepository.findByEmail(newUser.getEmail()).orElseThrow();
+        User createdUser = userRepository.findByEmail(originalEmail).orElseThrow();
         createdUser.setEmailVerified(true);
         userRepository.save(createdUser);
 
@@ -289,9 +288,8 @@ class UserControllerIT extends AbstractIntegrationTest {
 
         verify(emailService, never()).send(anyString(), anyString(), anyString());
 
-        User updatedUser = userRepository.findByEmail(updateUser.getEmail()).orElseThrow();
+        User updatedUser = userRepository.findByEmail(updatedEmail).orElseThrow();
         assertThat(updatedUser.getName()).isEqualTo(updateUser.getName());
         assertThat(updatedUser.getEmail()).isEqualTo(updateUser.getEmail());
     }
-
 }

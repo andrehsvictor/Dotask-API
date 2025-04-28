@@ -25,7 +25,6 @@ import andrehsvictor.dotask.email.EmailService;
 import andrehsvictor.dotask.user.dto.EmailVerificationTokenDto;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class UserEmailVerificationIT extends AbstractIntegrationTest {
 
@@ -38,9 +37,6 @@ class UserEmailVerificationIT extends AbstractIntegrationTest {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private Faker faker;
-
     private User testUser;
     private String validToken;
 
@@ -48,13 +44,13 @@ class UserEmailVerificationIT extends AbstractIntegrationTest {
     void setup() {
         doNothing().when(emailService).send(anyString(), anyString(), anyString());
 
-        String email = faker.internet().emailAddress();
+        String email = "test-user-" + UUID.randomUUID() + "@example.com";
 
         testUser = userRepository.findByEmail(email).orElseGet(() -> {
             PostUserDto newUser = PostUserDto.builder()
-                    .name(faker.name().fullName())
+                    .name("Test User")
                     .email(email)
-                    .password(faker.internet().password(8, 20, true, true, true))
+                    .password("TestPassword123!")
                     .build();
 
             return userService.create(newUser);

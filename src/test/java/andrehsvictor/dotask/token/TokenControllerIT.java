@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +20,11 @@ import andrehsvictor.dotask.user.User;
 import andrehsvictor.dotask.user.UserRepository;
 import andrehsvictor.dotask.user.dto.PostUserDto;
 import io.restassured.http.ContentType;
-import net.datafaker.Faker;
 
 class TokenControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private Faker faker;
 
     private String userEmail;
     private String userPassword;
@@ -37,11 +35,11 @@ class TokenControllerIT extends AbstractIntegrationTest {
     void setup() {
         userRepository.deleteAll();
 
-        userEmail = faker.internet().emailAddress();
+        userEmail = "test-user-" + UUID.randomUUID() + "@example.com";
         userPassword = "Test123!@#";
 
         PostUserDto user = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Test User")
                 .email(userEmail)
                 .password(userPassword)
                 .build();
@@ -110,11 +108,11 @@ class TokenControllerIT extends AbstractIntegrationTest {
 
     @Test
     void shouldFailRequestTokenWithUnverifiedEmail() {
-        String unverifiedEmail = faker.internet().emailAddress();
+        String unverifiedEmail = "unverified-user-" + UUID.randomUUID() + "@example.com";
         String password = "Test123!@#";
 
         PostUserDto unverifiedUser = PostUserDto.builder()
-                .name(faker.name().fullName())
+                .name("Unverified User")
                 .email(unverifiedEmail)
                 .password(password)
                 .build();
