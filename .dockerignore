@@ -1,0 +1,49 @@
+# Maven
+target/
+!target/*.jar
+.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+
+# Logs
+logs/
+*.log
+
+# Keys
+keys/
+*.key
+*.pem
+*.jks
+
+# Local environment configs
+.env
+.env.*
+*.env
+application-local.yml
+application-dev.yml
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Tests
+src/test/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+.dockerignore
+docker-compose*.yml
+
+# Documentation
+README.md
+LICENSE
+docs/
