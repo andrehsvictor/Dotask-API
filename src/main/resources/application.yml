@@ -40,7 +40,7 @@ security:
       private-key-path: file:${JWT_PRIVATE_KEY_PATH:.keys/private.pem}
       public-key-path: file:${JWT_PUBLIC_KEY_PATH:.keys/public.pem}
       audience: ${JWT_AUDIENCE:dotask}
-      issuer: ${JWT_ISSUER}
+      issuer: ${JWT_ISSUER:dotask}
     access:
       lifespan: ${ACCESS_TOKEN_LIFESPAN:15m}
     refresh:
