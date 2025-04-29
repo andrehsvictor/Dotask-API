@@ -9,8 +9,14 @@ RUN mvn package -DskipTests -Dmaven.javadoc.skip=true -B
 FROM eclipse-temurin:21-jre-alpine
 RUN addgroup --system javauser && adduser --system --ingroup javauser javauser
 WORKDIR /app
-RUN mkdir -p /app/keys /app/logs && \
+RUN mkdir -p /app/logs && \
     chown -R javauser:javauser /app
+
+# Create a directory for secrets and set permissions
+# to read-only for the user
+RUN mkdir -p /etc/secrets && \
+    chmod -R 555 /etc/secrets
+    
 COPY --from=build --chown=javauser:javauser /app/target/*.jar /app/app.jar
 EXPOSE 8080
 USER javauser
