@@ -37,10 +37,9 @@ logging:
 security:
   token:
     jwt:
-      private-key-path: file:${JWT_PRIVATE_KEY_PATH}
-      public-key-path: file:${JWT_PUBLIC_KEY_PATH}
-      issuer: ${JWT_ISSUER}
-      audience: ${JWT_AUDIENCE}
+      private-key-path: file:${JWT_PRIVATE_KEY_PATH:.keys/private.pem}
+      public-key-path: file:${JWT_PUBLIC_KEY_PATH:.keys/public.pem}
+      audience: ${JWT_AUDIENCE:dotask}
     access:
       lifespan: ${ACCESS_TOKEN_LIFESPAN:15m}
     refresh:
