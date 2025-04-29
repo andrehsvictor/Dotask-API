@@ -8,6 +8,7 @@ on:
       - "src/**"
       - "pom.xml"
       - ".github/workflows/**"
+      - "Dockerfile"
   schedule:
     - cron: "0 0 * * *"
   pull_request:
@@ -16,6 +17,7 @@ on:
       - "src/**"
       - "pom.xml"
       - ".github/workflows/**"
+      - "Dockerfile"
 
 jobs:
   test:
