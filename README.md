@@ -135,12 +135,6 @@ Dotask is a full-featured REST API for task and project management, allowing use
 
 ### Running the Application
 
-#### With Docker:
-
-```bash
-docker-compose -f docker-compose.dev.yml up -d
-```
-
 #### With Maven:
 
 ```bash
