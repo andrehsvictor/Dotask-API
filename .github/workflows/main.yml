@@ -99,17 +99,11 @@ jobs:
             VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
             REVISION=${{ github.sha }}
 
-  notify:
-    name: Notify on completion
-    needs: [test, build-and-push]
+  deploy:
+    name: Deploy to Render
+    needs: build-and-push
     runs-on: ubuntu-latest
-    if: always()
-
+    if: success() && github.ref == 'refs/heads/main'
     steps:
-      - name: Notify success
-        if: ${{ needs.test.result == 'success' && needs.build-and-push.result == 'success' }}
-        run: echo "Pipeline completed successfully"
-
-      - name: Notify failure
-        if: ${{ needs.test.result != 'success' || needs.build-and-push.result != 'success' }}
-        run: echo "Pipeline failed"
+      - name: Deploy to Render
+        run: curl ${{ secrets.RENDER_DEPLOY_URL }}
